@@ -14,7 +14,7 @@
 
             public event EventHandler OnCoinAdded;
             public event EventHandler OnCoinRemoved;
-
+            
             public bool IsFull => RemainingCapacity <= 0;
             public int Value => coins.Sum(c => c.Value);
             public int RemainingCapacity => Capacity - coins.Count;
@@ -51,7 +51,7 @@
 
                 coins.AddRange(payments);
 
-                OnCoinAdded.Invoke(this, EventArgs.Empty);
+                OnCoinAdded?.Invoke(this, EventArgs.Empty);
             }
         }
     }
