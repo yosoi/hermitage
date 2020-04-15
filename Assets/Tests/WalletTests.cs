@@ -13,16 +13,22 @@
         public class WalletTests
         {
             [Test]
-            public void PayCoin()
+            public void MultiCoinChargeDecreasesValue()
             {
                 IWallet wallet = new RegularWallet();
-                ICoin coin = new CopperCoin();
-                wallet.Pay(coin);
-                Assert.AreEqual(wallet.Value, coin.Value);
+                List<ICoin> coins = new List<ICoin>
+                {
+                    new SilverCoin(),
+                    new GoldCoin(),
+                    new CopperCoin()
+                };
+                wallet.Pay(coins.ToArray());
+                wallet.Charge(coins.Sum(coin => coin.Value));
+                Assert.AreEqual(wallet.Value, 0);
             }
 
             [Test]
-            public void PayCoins()
+            public void MultiCoinPaymentIncreasesValue()
             {
                 IWallet wallet = new RegularWallet();
                 ICoin[] coins = 
@@ -35,8 +41,14 @@
                 Assert.AreEqual(wallet.Value, coins.Sum(coin => coin.Value));
             }
 
+            // [Test]
+            // public void OverchargeLargeCoinIfNoSmallCoins()
+            // {
+
+            // }
+
             [Test]
-            public void Overpay()
+            public void PayValuableCoinsFirstIfCapacityLimited()
             {
                 IWallet wallet = new RegularWallet();
                 int startingCapacity = wallet.RemainingCapacity;
@@ -53,24 +65,24 @@
                 Assert.AreEqual(wallet.Value, startingCapacity * new GoldCoin().Value);
             }
 
-            // [Test]
-            // public void ChargeCoin()
-            // {
-            //     IWallet wallet = new RegularWallet();
+            [Test]
+            public void SingleCoinChargeDecreasesValue()
+            {
+                IWallet wallet = new RegularWallet();
+                ICoin coin = new GoldCoin();
+                wallet.Pay(coin);
+                wallet.Charge(coin.Value);
+                Assert.AreEqual(wallet.Value, 0);
+            }
 
-            // }
-
-            // [Test]
-            // public void ChargeCoins()
-            // {
-
-            // }
-
-            // [Test]
-            // public void Overcharge()
-            // {
-
-            // }
+            [Test]
+            public void SingleCoinPaymentIncreasesValue()
+            {
+                IWallet wallet = new RegularWallet();
+                ICoin coin = new CopperCoin();
+                wallet.Pay(coin);
+                Assert.AreEqual(wallet.Value, coin.Value);
+            }
         }
     }
 }
