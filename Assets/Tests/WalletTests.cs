@@ -41,11 +41,15 @@
                 Assert.AreEqual(wallet.Value, coins.Sum(coin => coin.Value));
             }
 
-            // [Test]
-            // public void OverchargeLargeCoinIfNoSmallCoins()
-            // {
-
-            // }
+            [Test]
+            public void OverchargeLargeCoinIfNoSmallCoins()
+            {
+                IWallet wallet = new RegularWallet();
+                ICoin coin = new GoldCoin();
+                wallet.Pay(coin);
+                wallet.Charge(1);
+                Assert.AreEqual(wallet.Value, 0);
+            }
 
             [Test]
             public void PayValuableCoinsFirstIfCapacityLimited()

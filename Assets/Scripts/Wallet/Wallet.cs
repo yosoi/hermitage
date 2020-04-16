@@ -5,6 +5,7 @@
         using System;
         using System.Collections.Generic;
         using System.Linq;
+        using UnityEngine;
 
         public abstract class Wallet : IWallet
         {
@@ -40,6 +41,11 @@
                     coins.Remove(coin);
                     payments.Add(coin);
                 }
+
+                int remainingCost = cost - payments.Sum(c => c.Value);
+                ICoin payment = coins.OrderBy(c => c.Value).FirstOrDefault(c => c.Value >= remainingCost);
+                coins.Remove(payment);
+                payments.Add(payment);
 
                 OnCoinRemoved?.Invoke(this, EventArgs.Empty);
 
